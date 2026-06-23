@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PayFlow — Plataforma de Pagamentos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════════════
+   PAYFLOW — style.css
+   Design system: "Ledger Violeta"
+   ═══════════════════════════════════════════════════ */
+
+:root {
+  --bg:        #0f0a1f;
+  --bg-soft:   #150f29;
+  --panel:     #1a1333;
+  --panel-2:   #1f1840;
+  --line:      rgba(212,245,71,.10);
+  --line-soft: rgba(255,255,255,.07);
+  --violet:    #6d3fd4;
+  --violet-lt: #9b7ae8;
+  --lime:      #d4f547;
+  --lime-dim:  #a8c430;
+  --text:      #f1eefc;
+  --text-dim:  #a79fc9;
+  --text-faint:#5e5683;
+  --red:       #ff6b81;
+  --blue:      #6ab7ff;
+
+  --display: 'Space Grotesk', sans-serif;
+  --sans: 'Inter', sans-serif;
+  --mono: 'Space Mono', monospace;
+
+  --radius: 14px;
+  --radius-sm: 9px;
+  --ease: cubic-bezier(.16,1,.3,1);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.6;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+input,select{font-family:inherit}
+.hidden{display:none!important}
+code{font-family:var(--mono)}
+
+.logo-mark{color:var(--lime)}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;border:none;border-radius:var(--radius-sm);padding:.7rem 1.3rem;font-weight:600;font-size:.86rem;transition:all .2s var(--ease)}
+.btn--primary{background:var(--lime);color:#161200}
+.btn--primary:hover{background:#e2ff5e;transform:translateY(-1px);box-shadow:0 8px 22px rgba(212,245,71,.22)}
+.btn--ghost{background:transparent;color:var(--text-dim);border:1.5px solid var(--line-soft)}
+.btn--ghost:hover{border-color:var(--lime);color:var(--lime)}
+.btn--full{width:100%}
+.btn--sm{padding:.45rem .9rem;font-size:.78rem}
+.btn-logout{background:none;border:none;color:var(--text-faint);font-size:1.1rem;cursor:pointer;padding:.4rem}
+.btn-logout:hover{color:var(--red)}
+
+/* ═══ AUTH SCREEN ═══ */
+.screen{min-height:100vh}
+#screen-login{display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse 900px 600px at 50% 0%, rgba(109,63,212,.25), transparent 60%)}
+.auth-card{background:var(--panel);border:1px solid var(--line-soft);border-radius:18px;padding:2.4rem 2.2rem;max-width:400px;width:100%;box-shadow:0 30px 80px -20px rgba(0,0,0,.6)}
+.auth-logo{font-family:var(--display);font-weight:700;font-size:1.5rem;display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem}
+.auth-tag{color:var(--text-dim);font-size:.82rem;margin-bottom:1.6rem}
+.auth-tabs{display:flex;gap:.4rem;background:var(--bg-soft);border-radius:var(--radius-sm);padding:.3rem;margin-bottom:1.5rem}
+.auth-tab{flex:1;background:none;border:none;padding:.55rem;border-radius:6px;color:var(--text-dim);font-weight:600;font-size:.84rem;transition:all .2s}
+.auth-tab.active{background:var(--violet);color:#fff}
+.auth-form label{display:block;font-size:.78rem;font-weight:600;color:var(--text-dim);margin-bottom:.4rem;margin-top:.9rem}
+.auth-form label:first-child{margin-top:0}
+.auth-form input,.auth-form select{
+  width:100%;background:var(--bg-soft);border:1.5px solid var(--line-soft);border-radius:var(--radius-sm);
+  padding:.65rem .85rem;color:var(--text);font-size:.9rem;outline:none;transition:border-color .2s;
+}
+.auth-form input:focus,.auth-form select:focus{border-color:var(--lime)}
+.auth-form button{margin-top:1.4rem}
+.auth-error{color:var(--red);font-size:.8rem;margin-top:.6rem}
+.auth-hint{font-size:.74rem;color:var(--text-faint);margin-top:1rem;text-align:center}
+
+/* ═══ APP LAYOUT ═══ */
+#screen-app{display:flex;min-height:100vh}
+.sidebar{width:230px;background:var(--bg-soft);border-right:1px solid var(--line-soft);display:flex;flex-direction:column;padding:1.4rem 1rem;flex-shrink:0}
+.sidebar__logo{font-family:var(--display);font-weight:700;font-size:1.2rem;display:flex;align-items:center;gap:.5rem;padding:0 .6rem;margin-bottom:2rem}
+.sidebar__nav{display:flex;flex-direction:column;gap:.3rem;flex:1}
+.nav-item{display:flex;align-items:center;gap:.7rem;background:none;border:none;color:var(--text-dim);padding:.65rem .9rem;border-radius:var(--radius-sm);font-size:.88rem;font-weight:500;text-align:left;transition:all .18s}
+.nav-item:hover{background:rgba(255,255,255,.04);color:var(--text)}
+.nav-item.active{background:rgba(212,245,71,.1);color:var(--lime)}
+.nav-icon{font-size:1rem;width:18px;text-align:center}
+
+.sidebar__user{display:flex;align-items:center;gap:.7rem;padding:.8rem;border-top:1px solid var(--line-soft);margin-top:1rem}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:var(--violet);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;flex-shrink:0}
+.user-info{flex:1;overflow:hidden}
+.user-name{font-size:.84rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-email{font-size:.72rem;color:var(--text-faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.main{flex:1;padding:2.2rem 2.6rem;overflow-y:auto;max-height:100vh}
+.view{display:none}
+.view.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.view__head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.8rem}
+.view__head h1{font-family:var(--display);font-size:1.6rem;font-weight:700}
+.env-badge{font-family:var(--mono);font-size:.7rem;color:var(--lime);border:1px solid var(--line);padding:.3rem .8rem;border-radius:50px}
+
+/* ═══ KPI GRID ═══ */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line-soft);border:1px solid var(--line-soft);border-radius:var(--radius);overflow:hidden;margin-bottom:1.6rem}
+.kpi-card{background:var(--panel);padding:1.3rem 1.4rem}
+.kpi-card__value{font-family:var(--mono);font-weight:700;font-size:1.7rem;color:var(--lime);line-height:1;margin-bottom:.4rem}
+.kpi-card__label{font-size:.8rem;color:var(--text-dim)}
+.kpi-card__delta{font-family:var(--mono);font-size:.7rem;margin-top:.35rem}
+.kpi-card__delta--up{color:var(--lime)}
+.kpi-card__delta--down{color:var(--red)}
+
+/* ═══ DASHBOARD GRID ═══ */
+.dash-grid{display:grid;grid-template-columns:2fr 1fr;gap:1.2rem;margin-bottom:1.2rem}
+.panel{background:var(--panel);border:1px solid var(--line-soft);border-radius:var(--radius);padding:1.4rem;margin-bottom:1.2rem}
+.panel__head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1rem}
+.panel__head h3{font-size:.92rem;font-weight:600}
+.panel__sub{font-family:var(--mono);font-size:.68rem;color:var(--text-faint)}
+.panel__link{font-size:.78rem;color:var(--lime);cursor:pointer}
+
+/* ═══ TABLES ═══ */
+.table-wrap{overflow-x:auto}
+table.data-table{width:100%;border-collapse:collapse;font-size:.85rem}
+table.data-table th{text-align:left;padding:.6rem .8rem;color:var(--text-faint);font-size:.72rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;border-bottom:1px solid var(--line-soft)}
+table.data-table td{padding:.7rem .8rem;border-bottom:1px solid rgba(255,255,255,.03)}
+table.data-table tr:hover td{background:rgba(255,255,255,.02)}
+table.data-table tr.clickable{cursor:pointer}
+.cell-mono{font-family:var(--mono);font-size:.82rem}
+.cell-amount{font-family:var(--mono);font-weight:600}
+
+.status-badge{display:inline-flex;align-items:center;gap:.4rem;font-size:.74rem;font-weight:600;padding:.3rem .7rem;border-radius:50px}
+.status-badge--paid{background:rgba(212,245,71,.12);color:var(--lime)}
+.status-badge--pending{background:rgba(106,183,255,.12);color:var(--blue)}
+.status-badge--failed{background:rgba(255,107,129,.12);color:var(--red)}
+.status-badge--refunded{background:rgba(167,159,201,.12);color:var(--text-dim)}
+
+/* ═══ SEARCH / FILTERS ═══ */
+.search-bar,.filter-bar{margin-bottom:1.2rem}
+.search-bar input{
+  width:100%;max-width:420px;background:var(--panel);border:1.5px solid var(--line-soft);border-radius:var(--radius-sm);
+  padding:.65rem 1rem;color:var(--text);font-size:.86rem;outline:none;transition:border-color .2s;
+}
+.search-bar input:focus{border-color:var(--lime)}
+.filter-bar{display:flex;gap:.5rem;flex-wrap:wrap}
+.filter-chip{font-size:.78rem;padding:.4rem .9rem;border-radius:50px;border:1px solid var(--line-soft);color:var(--text-dim);background:none;transition:all .2s}
+.filter-chip.active{border-color:var(--lime);color:var(--lime);background:rgba(212,245,71,.08)}
+
+/* ═══ API KEYS ═══ */
+.apikey-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.9rem 0;border-bottom:1px solid var(--line-soft)}
+.apikey-row:last-child{border-bottom:none}
+.apikey-info{display:flex;flex-direction:column;gap:.3rem}
+.apikey-label{font-size:.78rem;color:var(--text-dim)}
+.apikey-value{font-size:.82rem;color:var(--lime);background:var(--bg-soft);padding:.3rem .6rem;border-radius:6px}
+.code-block{background:#08060f;border:1px solid var(--line-soft);border-radius:var(--radius-sm);padding:1.1rem;font-family:var(--mono);font-size:.8rem;color:var(--text-dim);overflow-x:auto;white-space:pre;line-height:1.7}
+
+/* ═══ MODAL ═══ */
+.modal{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px)}
+.modal__box{position:relative;background:var(--panel);border:1px solid var(--line-soft);border-radius:var(--radius);max-width:460px;width:100%;max-height:85vh;overflow-y:auto;padding:1.8rem}
+.modal__close{position:absolute;top:1rem;right:1rem;width:32px;height:32px;border-radius:50%;background:var(--panel-2);color:var(--text-dim);border:none;display:flex;align-items:center;justify-content:center}
+.modal__close:hover{color:var(--lime)}
+.modal__title{font-family:var(--display);font-size:1.2rem;font-weight:700;margin-bottom:1.2rem}
+.modal__box form label{display:block;font-size:.78rem;font-weight:600;color:var(--text-dim);margin-bottom:.4rem;margin-top:.9rem}
+.modal__box form label:first-child{margin-top:0}
+.modal__box form input,.modal__box form select{
+  width:100%;background:var(--bg-soft);border:1.5px solid var(--line-soft);border-radius:var(--radius-sm);
+  padding:.6rem .8rem;color:var(--text);font-size:.86rem;outline:none;
+}
+.modal__box form input:focus,.modal__box form select:focus{border-color:var(--lime)}
+.modal__box form button{margin-top:1.3rem}
+
+.detail-row{display:flex;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--line-soft);font-size:.85rem}
+.detail-row:last-child{border-bottom:none}
+.detail-row__label{color:var(--text-dim)}
+.detail-row__value{font-family:var(--mono);font-weight:600}
+
+/* ═══ TOAST ═══ */
+.toast-container{position:fixed;bottom:1.5rem;right:1.5rem;z-index:2000;display:flex;flex-direction:column;gap:.6rem}
+.toast{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--lime);border-radius:var(--radius-sm);padding:.85rem 1.2rem;font-size:.85rem;box-shadow:0 10px 30px rgba(0,0,0,.4);animation:toastIn .3s var(--ease);min-width:240px}
+.toast--error{border-left-color:var(--red)}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:900px){
+  #screen-app{flex-direction:column}
+  .sidebar{width:100%;flex-direction:row;align-items:center;padding:.8rem 1rem}
+  .sidebar__logo{margin-bottom:0;margin-right:1rem}
+  .sidebar__nav{flex-direction:row;flex:1;overflow-x:auto}
+  .sidebar__user{display:none}
+  .main{padding:1.4rem}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .dash-grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+<!-- ═══════════════ LOGIN SCREEN ═══════════════ -->
+<div class="screen" id="screen-login">
+  <div class="auth-card">
+    <div class="auth-logo"><span class="logo-mark">◐</span> PayFlow</div>
+    <p class="auth-tag">Plataforma de pagamentos · demonstração</p>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login">Entrar</button>
+      <button class="auth-tab" data-tab="register">Criar conta</button>
+    </div>
+
+    <form id="form-login" class="auth-form">
+      <label>E-mail</label>
+      <input type="email" id="login-email" placeholder="voce@empresa.com" value="demo@payflow.io"/>
+      <label>Senha</label>
+      <input type="password" id="login-password" placeholder="••••••••" value="demo1234"/>
+      <p class="auth-error hidden" id="login-error"></p>
+      <button type="submit" class="btn btn--primary btn--full">Entrar</button>
+      <p class="auth-hint">Use qualquer e-mail/senha — esta é uma demonstração local.</p>
+    </form>
+
+    <form id="form-register" class="auth-form hidden">
+      <label>Nome</label>
+      <input type="text" id="reg-name" placeholder="Seu nome"/>
+      <label>E-mail</label>
+      <input type="email" id="reg-email" placeholder="voce@empresa.com"/>
+      <label>Senha</label>
+      <input type="password" id="reg-password" placeholder="Mínimo 6 caracteres"/>
+      <p class="auth-error hidden" id="reg-error"></p>
+      <button type="submit" class="btn btn--primary btn--full">Criar conta</button>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════════════ MAIN APP ═══════════════ -->
+<div class="screen hidden" id="screen-app">
+
+  <aside class="sidebar">
+    <div class="sidebar__logo"><span class="logo-mark">◐</span> PayFlow</div>
+    <nav class="sidebar__nav">
+      <button class="nav-item active" data-view="dashboard"><span class="nav-icon">▦</span> Dashboard</button>
+      <button class="nav-item" data-view="customers"><span class="nav-icon">◎</span> Clientes</button>
+      <button class="nav-item" data-view="payments"><span class="nav-icon">◈</span> Pagamentos</button>
+      <button class="nav-item" data-view="apikeys"><span class="nav-icon">⚿</span> Chaves de API</button>
+    </nav>
+    <div class="sidebar__user">
+      <div class="user-avatar" id="user-avatar">D</div>
+      <div class="user-info">
+        <div class="user-name" id="user-name">Demo</div>
+        <div class="user-email" id="user-email">demo@payflow.io</div>
+      </div>
+      <button class="btn-logout" id="btn-logout" title="Sair">⏻</button>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- DASHBOARD VIEW -->
+    <div class="view active" id="view-dashboard">
+      <div class="view__head">
+        <h1>Dashboard financeiro</h1>
+        <span class="env-badge">ambiente de teste</span>
+      </div>
+
+      <div class="kpi-grid" id="kpi-grid"></div>
+
+      <div class="dash-grid">
+        <div class="panel panel--wide">
+          <div class="panel__head"><h3>Volume processado</h3><span class="panel__sub">últimos 14 dias</span></div>
+          <div id="volume-chart"></div>
+        </div>
+        <div class="panel">
+          <div class="panel__head"><h3>Status dos pagamentos</h3></div>
+          <div id="status-donut"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head"><h3>Pagamentos recentes</h3><a class="panel__link" data-goto="payments">ver todos →</a></div>
+        <div class="table-wrap" id="recent-payments-table"></div>
+      </div>
+    </div>
+
+    <!-- CUSTOMERS VIEW -->
+    <div class="view" id="view-customers">
+      <div class="view__head">
+        <h1>Clientes</h1>
+        <button class="btn btn--primary" id="btn-new-customer">+ Novo cliente</button>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="customer-search" placeholder="Buscar por nome, e-mail ou documento..."/>
+      </div>
+      <div class="table-wrap" id="customers-table"></div>
+    </div>
+
+    <!-- PAYMENTS VIEW -->
+    <div class="view" id="view-payments">
+      <div class="view__head">
+        <h1>Pagamentos</h1>
+        <button class="btn btn--primary" id="btn-new-payment">+ Nova cobrança</button>
+      </div>
+      <div class="filter-bar" id="payment-filters"></div>
+      <div class="table-wrap" id="payments-table"></div>
+    </div>
+
+    <!-- API KEYS VIEW -->
+    <div class="view" id="view-apikeys">
+      <div class="view__head"><h1>Chaves de API</h1></div>
+      <div class="panel">
+        <div class="panel__head"><h3>Suas chaves</h3></div>
+        <div class="apikey-row">
+          <div class="apikey-info">
+            <span class="apikey-label">Chave de teste (pública)</span>
+            <code class="apikey-value">pk_test_4f8a2b91c3d7e6f0a1b2c3d4e5f60718</code>
+          </div>
+          <button class="btn btn--ghost btn--sm" data-copy="pk_test_4f8a2b91c3d7e6f0a1b2c3d4e5f60718">Copiar</button>
+        </div>
+        <div class="apikey-row">
+          <div class="apikey-info">
+            <span class="apikey-label">Chave de teste (secreta)</span>
+            <code class="apikey-value">sk_test_9e8d7c6b5a4938271605f4e3d2c1b0a9</code>
+          </div>
+          <button class="btn btn--ghost btn--sm" data-copy="sk_test_9e8d7c6b5a4938271605f4e3d2c1b0a9">Copiar</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel__head"><h3>Exemplo de chamada — criar cobrança</h3></div>
+        <pre class="code-block">curl -X POST https://api.payflow.io/v1/charges \
+  -H "Authorization: Bearer sk_test_9e8d..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount": 15000,
+    "currency": "BRL",
+    "customer_id": "cus_8x2k1a",
+    "description": "Assinatura mensal — Plano Pro"
+  }'</pre>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+</div>
+
+<!-- ═══════════════ MODALS ═══════════════ -->
+<div class="modal hidden" id="modal-customer">
+  <div class="modal__backdrop" data-close-modal></div>
+  <div class="modal__box">
+    <button class="modal__close" data-close-modal>✕</button>
+    <h2 class="modal__title">Novo cliente</h2>
+    <form id="form-customer">
+      <label>Nome completo</label>
+      <input type="text" id="cust-name" placeholder="Maria Oliveira" required/>
+      <label>E-mail</label>
+      <input type="email" id="cust-email" placeholder="maria@email.com" required/>
+      <label>Documento (CPF/CNPJ)</label>
+      <input type="text" id="cust-doc" placeholder="000.000.000-00" required/>
+      <label>Telefone</label>
+      <input type="text" id="cust-phone" placeholder="(11) 90000-0000"/>
+      <button type="submit" class="btn btn--primary btn--full">Salvar cliente</button>
+    </form>
+  </div>
+</div>
+
+<div class="modal hidden" id="modal-payment">
+  <div class="modal__backdrop" data-close-modal></div>
+  <div class="modal__box">
+    <button class="modal__close" data-close-modal>✕</button>
+    <h2 class="modal__title">Nova cobrança</h2>
+    <form id="form-payment">
+      <label>Cliente</label>
+      <select id="pay-customer" required></select>
+      <label>Valor (R$)</label>
+      <input type="number" id="pay-amount" placeholder="150.00" step="0.01" min="0.01" required/>
+      <label>Método</label>
+      <select id="pay-method">
+        <option value="pix">Pix</option>
+        <option value="credit_card">Cartão de crédito</option>
+        <option value="boleto">Boleto</option>
+      </select>
+      <label>Descrição</label>
+      <input type="text" id="pay-desc" placeholder="Assinatura mensal — Plano Pro"/>
+      <button type="submit" class="btn btn--primary btn--full">Criar cobrança</button>
+    </form>
+  </div>
+</div>
+
+<div class="modal hidden" id="modal-payment-detail">
+  <div class="modal__backdrop" data-close-modal></div>
+  <div class="modal__box">
+    <button class="modal__close" data-close-modal>✕</button>
+    <h2 class="modal__title">Detalhe do pagamento</h2>
+    <div id="payment-detail-body"></div>
+  </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ════════════════════════════════════════════════════
+//  PAYFLOW — data.js
+//  Dados iniciais simulados
+// ════════════════════════════════════════════════════
+
+const SEED_CUSTOMERS = [
+  { id: "cus_8x2k1a", name: "Maria Oliveira", email: "maria.oliveira@email.com", doc: "123.456.789-00", phone: "(11) 98765-4321", createdAt: "2025-03-12" },
+  { id: "cus_3p9q7z", name: "João Pereira", email: "joao.pereira@email.com", doc: "987.654.321-00", phone: "(21) 99876-5432", createdAt: "2025-04-02" },
+  { id: "cus_5m1n8w", name: "Construtora Aurora Ltda", email: "financeiro@auroraconstrutora.com.br", doc: "12.345.678/0001-90", phone: "(11) 3456-7890", createdAt: "2025-04-18" },
+  { id: "cus_2k7j4x", name: "Ana Beatriz Souza", email: "ana.souza@email.com", doc: "456.789.123-00", phone: "(31) 98888-1234", createdAt: "2025-05-01" },
+  { id: "cus_9d4f2c", name: "Tech Solutions ME", email: "contato@techsolutions.com.br", doc: "23.456.789/0001-12", phone: "(11) 4002-8922", createdAt: "2025-05-10" },
+  { id: "cus_6h3g9y", name: "Carlos Eduardo Lima", email: "cadu.lima@email.com", doc: "789.123.456-00", phone: "(41) 99123-4567", createdAt: "2025-05-22" },
+];
+
+const PAYMENT_METHODS = { pix: "Pix", credit_card: "Cartão de crédito", boleto: "Boleto" };
+const PAYMENT_STATUSES = ["paid", "pending", "failed", "refunded"];
+
+function generateSeedPayments() {
+  const payments = [];
+  const now = new Date();
+  const descriptions = [
+    "Assinatura mensal — Plano Pro", "Compra única — Pacote Premium", "Renovação anual — Plano Enterprise",
+    "Serviço de consultoria", "Taxa de adesão", "Mensalidade — Plano Básico", "Upgrade de plano",
+  ];
+
+  for (let i = 0; i < 42; i++) {
+    const daysAgo = Math.floor(Math.random() * 14);
+    const date = new Date(now);
+    date.setDate(date.getDate() - daysAgo);
+    date.setHours(Math.floor(Math.random() * 24), Math.floor(Math.random() * 60));
+
+    const customer = SEED_CUSTOMERS[Math.floor(Math.random() * SEED_CUSTOMERS.length)];
+    const methods = Object.keys(PAYMENT_METHODS);
+    const method = methods[Math.floor(Math.random() * methods.length)];
+
+    // Weighted status: mostly paid, some pending, few failed/refunded
+    const rand = Math.random();
+    let status;
+    if (rand < 0.72) status = "paid";
+    else if (rand < 0.86) status = "pending";
+    else if (rand < 0.95) status = "failed";
+    else status = "refunded";
+
+    payments.push({
+      id: "pay_" + Math.random().toString(36).slice(2, 10),
+      customerId: customer.id,
+      customerName: customer.name,
+      amount: Math.round((Math.random() * 980 + 20) * 100) / 100,
+      method,
+      status,
+      description: descriptions[Math.floor(Math.random() * descriptions.length)],
+      createdAt: date.toISOString(),
+      dateDisplay: date.toLocaleDateString("pt-BR") + " " + date.toTimeString().slice(0, 5),
+    });
+  }
+
+  return payments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+}
+
+const SEED_PAYMENTS = generateSeedPayments();
+// ════════════════════════════════════════════════════
+//  PAYFLOW — store.js
+//  Gerenciamento de estado (simula backend + banco de dados)
+// ════════════════════════════════════════════════════
+
+const Store = {
+  STORAGE_KEY: "payflow_demo_state_v1",
+
+  state: {
+    currentUser: null,
+    customers: [],
+    payments: [],
+  },
+
+  load() {
+    try {
+      const saved = localStorage.getItem(this.STORAGE_KEY);
+      if (saved) {
+        this.state = JSON.parse(saved);
+        return;
+      }
+    } catch (e) {
+      console.warn("Falha ao carregar estado salvo", e);
+    }
+    // First run: seed with demo data
+    this.state.customers = [...SEED_CUSTOMERS];
+    this.state.payments = [...SEED_PAYMENTS];
+    this.save();
+  },
+
+  save() {
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.state));
+    } catch (e) {
+      console.warn("Falha ao salvar estado", e);
+    }
+  },
+
+  // ── AUTH ──
+  registerUser(name, email, password) {
+    // Demo-only: doesn't actually validate password hashing etc.
+    const user = { name, email, id: "usr_" + Math.random().toString(36).slice(2, 9) };
+    this.state.currentUser = user;
+    this.save();
+    return user;
+  },
+
+  loginUser(email, password) {
+    // Demo-only: accepts any email/password combination
+    const name = email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+    const user = { name: name || "Usuário", email, id: "usr_demo" };
+    this.state.currentUser = user;
+    this.save();
+    return user;
+  },
+
+  logoutUser() {
+    this.state.currentUser = null;
+    this.save();
+  },
+
+  // ── CUSTOMERS ──
+  getCustomers() {
+    return this.state.customers;
+  },
+
+  addCustomer(data) {
+    const customer = {
+      id: "cus_" + Math.random().toString(36).slice(2, 9),
+      name: data.name,
+      email: data.email,
+      doc: data.doc,
+      phone: data.phone || "",
+      createdAt: new Date().toISOString().slice(0, 10),
+    };
+    this.state.customers.unshift(customer);
+    this.save();
+    return customer;
+  },
+
+  findCustomer(id) {
+    return this.state.customers.find(c => c.id === id);
+  },
+
+  // ── PAYMENTS ──
+  getPayments() {
+    return this.state.payments;
+  },
+
+  addPayment(data) {
+    const customer = this.findCustomer(data.customerId);
+    const payment = {
+      id: "pay_" + Math.random().toString(36).slice(2, 10),
+      customerId: data.customerId,
+      customerName: customer ? customer.name : "Desconhecido",
+      amount: data.amount,
+      method: data.method,
+      status: "pending",
+      description: data.description || "",
+      createdAt: new Date().toISOString(),
+      dateDisplay: new Date().toLocaleDateString("pt-BR") + " " + new Date().toTimeString().slice(0, 5),
+    };
+    this.state.payments.unshift(payment);
+    this.save();
+
+    // Simulate async processing — most payments settle to "paid" shortly after creation
+    setTimeout(() => {
+      const p = this.state.payments.find(x => x.id === payment.id);
+      if (p && p.status === "pending") {
+        p.status = Math.random() < 0.88 ? "paid" : "failed";
+        this.save();
+        if (typeof onPaymentSettled === "function") onPaymentSettled(p);
+      }
+    }, 2200);
+
+    return payment;
+  },
+
+  findPayment(id) {
+    return this.state.payments.find(p => p.id === id);
+  },
+
+  updatePaymentStatus(id, status) {
+    const payment = this.findPayment(id);
+    if (payment) {
+      payment.status = status;
+      this.save();
+    }
+    return payment;
+  },
+
+  // ── METRICS ──
+  getMetrics() {
+    const payments = this.state.payments;
+    const paid = payments.filter(p => p.status === "paid");
+    const totalVolume = paid.reduce((sum, p) => sum + p.amount, 0);
+    const pendingCount = payments.filter(p => p.status === "pending").length;
+    const failedCount = payments.filter(p => p.status === "failed").length;
+    const avgTicket = paid.length > 0 ? totalVolume / paid.length : 0;
+
+    return {
+      totalVolume,
+      paidCount: paid.length,
+      pendingCount,
+      failedCount,
+      avgTicket,
+      totalCustomers: this.state.customers.length,
+      conversionRate: payments.length > 0 ? (paid.length / payments.length) * 100 : 0,
+    };
+  },
+
+  resetDemoData() {
+    localStorage.removeItem(this.STORAGE_KEY);
+    this.state.customers = [...SEED_CUSTOMERS];
+    this.state.payments = [...SEED_PAYMENTS];
+    this.save();
+  },
+};
+// ════════════════════════════════════════════════════
+//  PAYFLOW — charts.js
+//  Gráficos SVG nativos
+// ════════════════════════════════════════════════════
+
+const PayCharts = {
+  renderVolumeChart(containerId, payments) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    // Aggregate paid volume by day for last 14 days
+    const days = [];
+    const now = new Date();
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
+      days.push({ key: d.toISOString().slice(0, 10), label: d.getDate() + "/" + (d.getMonth() + 1), total: 0 });
+    }
+
+    payments.forEach(p => {
+      if (p.status !== "paid") return;
+      const key = p.createdAt.slice(0, 10);
+      const day = days.find(d => d.key === key);
+      if (day) day.total += p.amount;
+    });
+
+    const values = days.map(d => d.total);
+    const w = 640, h = 220, padding = 30;
+    const maxVal = Math.max(...values, 1) * 1.2;
+    const stepX = (w - padding * 2) / (values.length - 1);
+    const toY = (val) => h - padding - (val / maxVal) * (h - padding * 1.5);
+    const toX = (i) => padding + i * stepX;
+
+    const points = values.map((v, i) => `${toX(i)},${toY(v)}`).join(" ");
+    const areaPoints = `${toX(0)},${h - padding} ${points} ${toX(values.length - 1)},${h - padding}`;
+
+    const gridLines = [0.33, 0.66, 1].map(f => {
+      const y = h - padding - f * (h - padding * 1.5);
+      return `<line x1="${padding}" y1="${y}" x2="${w - padding}" y2="${y}" stroke="rgba(255,255,255,.05)" stroke-width="1"/>`;
+    }).join("");
+
+    const labels = days.filter((_, i) => i % 2 === 0).map((d, idx) => {
+      const realIdx = idx * 2;
+      return `<text x="${toX(realIdx)}" y="${h - 6}" text-anchor="middle" font-family="Space Mono" font-size="10" fill="var(--text-faint)">${d.label}</text>`;
+    }).join("");
+
+    container.innerHTML = `
+      <svg width="100%" height="${h}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="volGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="var(--lime)" stop-opacity="0.22"/>
+            <stop offset="100%" stop-color="var(--lime)" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        ${gridLines}
+        <polygon points="${areaPoints}" fill="url(#volGrad)"/>
+        <polyline points="${points}" fill="none" stroke="var(--lime)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+        ${labels}
+      </svg>
+    `;
+  },
+
+  renderStatusDonut(containerId, payments) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const counts = { paid: 0, pending: 0, failed: 0, refunded: 0 };
+    payments.forEach(p => { counts[p.status] = (counts[p.status] || 0) + 1; });
+    const total = payments.length || 1;
+
+    const colorMap = { paid: "var(--lime)", pending: "var(--blue)", failed: "var(--red)", refunded: "var(--text-faint)" };
+    const labelMap = { paid: "Pago", pending: "Pendente", failed: "Falhou", refunded: "Reembolsado" };
+
+    const size = 160, radius = 58, stroke = 20, cx = size / 2, cy = size / 2;
+    const circumference = 2 * Math.PI * radius;
+
+    let offset = 0;
+    const segments = Object.keys(counts).map(key => {
+      const fraction = counts[key] / total;
+      const dash = fraction * circumference;
+      const seg = fraction > 0 ? `<circle cx="${cx}" cy="${cy}" r="${radius}" fill="none"
+        stroke="${colorMap[key]}" stroke-width="${stroke}"
+        stroke-dasharray="${dash} ${circumference - dash}"
+        stroke-dashoffset="${-offset}"
+        transform="rotate(-90 ${cx} ${cy})"/>` : "";
+      offset += dash;
+      return seg;
+    }).join("");
+
+    container.innerHTML = `
+      <div style="display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap">
+        <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${segments}</svg>
+        <div style="display:flex;flex-direction:column;gap:.5rem">
+          ${Object.keys(counts).map(key => `
+            <div style="display:flex;align-items:center;gap:.5rem;font-size:.8rem">
+              <span style="width:9px;height:9px;border-radius:50%;background:${colorMap[key]};display:inline-block"></span>
+              <span style="color:var(--text-dim)">${labelMap[key]}</span>
+              <span style="font-family:var(--mono);font-weight:600;margin-left:auto">${counts[key]}</span>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    `;
+  },
+};
+// ════════════════════════════════════════════════════
+//  PAYFLOW — app.js
+//  Orquestração principal
+// ════════════════════════════════════════════════════
+
+let currentPaymentFilter = "all";
+let currentCustomerSearch = "";
+
+document.addEventListener("DOMContentLoaded", () => {
+  Store.load();
+  initAuthScreen();
+
+  if (Store.state.currentUser) {
+    showApp();
+  }
+});
+
+// ════════════════════════════════════════════════════
+//  AUTH SCREEN
+// ════════════════════════════════════════════════════
+function initAuthScreen() {
+  document.querySelectorAll(".auth-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".auth-tab").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      document.getElementById("form-login").classList.toggle("hidden", tab.dataset.tab !== "login");
+      document.getElementById("form-register").classList.toggle("hidden", tab.dataset.tab !== "register");
+    });
+  });
+
+  document.getElementById("form-login").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const email = document.getElementById("login-email").value.trim();
+    const password = document.getElementById("login-password").value;
+    const errEl = document.getElementById("login-error");
+
+    if (!email || !password) {
+      errEl.textContent = "Preencha e-mail e senha.";
+      errEl.classList.remove("hidden");
+      return;
+    }
+    errEl.classList.add("hidden");
+    Store.loginUser(email, password);
+    showApp();
+  });
+
+  document.getElementById("form-register").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const name = document.getElementById("reg-name").value.trim();
+    const email = document.getElementById("reg-email").value.trim();
+    const password = document.getElementById("reg-password").value;
+    const errEl = document.getElementById("reg-error");
+
+    if (!name || !email || !password) {
+      errEl.textContent = "Preencha todos os campos.";
+      errEl.classList.remove("hidden");
+      return;
+    }
+    if (password.length < 6) {
+      errEl.textContent = "A senha deve ter pelo menos 6 caracteres.";
+      errEl.classList.remove("hidden");
+      return;
+    }
+    errEl.classList.add("hidden");
+    Store.registerUser(name, email, password);
+    showApp();
+  });
+}
+
+function showApp() {
+  document.getElementById("screen-login").classList.add("hidden");
+  document.getElementById("screen-app").classList.remove("hidden");
+
+  const user = Store.state.currentUser;
+  document.getElementById("user-name").textContent = user.name;
+  document.getElementById("user-email").textContent = user.email;
+  document.getElementById("user-avatar").textContent = (user.name || "U").charAt(0).toUpperCase();
+
+  initNavigation();
+  initDashboard();
+  initCustomersView();
+  initPaymentsView();
+  initModals();
+  initApiKeyCopy();
+
+  document.getElementById("btn-logout").addEventListener("click", () => {
+    Store.logoutUser();
+    location.reload();
+  });
+}
+
+// ════════════════════════════════════════════════════
+//  NAVIGATION
+// ════════════════════════════════════════════════════
+function initNavigation() {
+  document.querySelectorAll(".nav-item").forEach(item => {
+    item.addEventListener("click", () => switchView(item.dataset.view));
+  });
+  document.querySelectorAll("[data-goto]").forEach(el => {
+    el.addEventListener("click", () => switchView(el.dataset.goto));
+  });
+}
+
+function switchView(viewName) {
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.toggle("active", n.dataset.view === viewName));
+  document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.id === "view-" + viewName));
+}
+
+// ════════════════════════════════════════════════════
+//  DASHBOARD
+// ════════════════════════════════════════════════════
+function initDashboard() {
+  renderKpis();
+  renderVolumeAndDonut();
+  renderRecentPaymentsTable();
+}
+
+function renderKpis() {
+  const m = Store.getMetrics();
+  const el = document.getElementById("kpi-grid");
+  el.innerHTML = `
+    <div class="kpi-card">
+      <div class="kpi-card__value">${formatCurrency(m.totalVolume)}</div>
+      <div class="kpi-card__label">Volume processado</div>
+      <div class="kpi-card__delta kpi-card__delta--up">↑ últimos 14 dias</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-card__value">${m.paidCount}</div>
+      <div class="kpi-card__label">Pagamentos confirmados</div>
+      <div class="kpi-card__delta kpi-card__delta--up">${m.conversionRate.toFixed(0)}% de conversão</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-card__value">${formatCurrency(m.avgTicket)}</div>
+      <div class="kpi-card__label">Ticket médio</div>
+      <div class="kpi-card__delta kpi-card__delta--up">por transação paga</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-card__value">${m.totalCustomers}</div>
+      <div class="kpi-card__label">Clientes cadastrados</div>
+      <div class="kpi-card__delta kpi-card__delta--up">total ativo</div>
+    </div>
+  `;
+}
+
+function renderVolumeAndDonut() {
+  PayCharts.renderVolumeChart("volume-chart", Store.getPayments());
+  PayCharts.renderStatusDonut("status-donut", Store.getPayments());
+}
+
+function renderRecentPaymentsTable() {
+  const el = document.getElementById("recent-payments-table");
+  const recent = Store.getPayments().slice(0, 8);
+  el.innerHTML = buildPaymentsTableHtml(recent);
+  attachPaymentRowHandlers(el);
+}
+
+// ════════════════════════════════════════════════════
+//  CUSTOMERS VIEW
+// ════════════════════════════════════════════════════
+function initCustomersView() {
+  renderCustomersTable();
+
+  document.getElementById("customer-search").addEventListener("input", (e) => {
+    currentCustomerSearch = e.target.value.trim().toLowerCase();
+    renderCustomersTable();
+  });
+
+  document.getElementById("btn-new-customer").addEventListener("click", () => {
+    openModal("modal-customer");
+  });
+}
+
+function renderCustomersTable() {
+  const el = document.getElementById("customers-table");
+  let customers = Store.getCustomers();
+
+  if (currentCustomerSearch) {
+    customers = customers.filter(c =>
+      c.name.toLowerCase().includes(currentCustomerSearch) ||
+      c.email.toLowerCase().includes(currentCustomerSearch) ||
+      c.doc.toLowerCase().includes(currentCustomerSearch)
+    );
+  }
+
+  if (customers.length === 0) {
+    el.innerHTML = `<p style="color:var(--text-faint);padding:2rem;text-align:center">Nenhum cliente encontrado.</p>`;
+    return;
+  }
+
+  el.innerHTML = `
+    <table class="data-table">
+      <thead><tr><th>Nome</th><th>E-mail</th><th>Documento</th><th>Telefone</th><th>Cadastrado em</th></tr></thead>
+      <tbody>
+        ${customers.map(c => `
+          <tr>
+            <td>${escapeHtml(c.name)}</td>
+            <td class="cell-mono">${escapeHtml(c.email)}</td>
+            <td class="cell-mono">${escapeHtml(c.doc)}</td>
+            <td class="cell-mono">${escapeHtml(c.phone || "—")}</td>
+            <td>${formatDate(c.createdAt)}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+// ════════════════════════════════════════════════════
+//  PAYMENTS VIEW
+// ════════════════════════════════════════════════════
+function initPaymentsView() {
+  renderPaymentFilters();
+  renderPaymentsTable();
+
+  document.getElementById("btn-new-payment").addEventListener("click", () => {
+    populateCustomerSelect();
+    openModal("modal-payment");
+  });
+}
+
+function renderPaymentFilters() {
+  const el = document.getElementById("payment-filters");
+  const filters = [
+    { key: "all", label: "Todos" },
+    { key: "paid", label: "Pagos" },
+    { key: "pending", label: "Pendentes" },
+    { key: "failed", label: "Falhados" },
+    { key: "refunded", label: "Reembolsados" },
+  ];
+  el.innerHTML = filters.map(f => `
+    <button class="filter-chip ${f.key === currentPaymentFilter ? 'active' : ''}" data-filter="${f.key}">${f.label}</button>
+  `).join("");
+
+  el.querySelectorAll(".filter-chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      currentPaymentFilter = chip.dataset.filter;
+      renderPaymentFilters();
+      renderPaymentsTable();
+    });
+  });
+}
+
+function renderPaymentsTable() {
+  const el = document.getElementById("payments-table");
+  let payments = Store.getPayments();
+  if (currentPaymentFilter !== "all") {
+    payments = payments.filter(p => p.status === currentPaymentFilter);
+  }
+  el.innerHTML = buildPaymentsTableHtml(payments);
+  attachPaymentRowHandlers(el);
+}
+
+function buildPaymentsTableHtml(payments) {
+  if (payments.length === 0) {
+    return `<p style="color:var(--text-faint);padding:2rem;text-align:center">Nenhum pagamento encontrado.</p>`;
+  }
+  return `
+    <table class="data-table">
+      <thead><tr><th>ID</th><th>Cliente</th><th>Valor</th><th>Método</th><th>Status</th><th>Data</th></tr></thead>
+      <tbody>
+        ${payments.map(p => `
+          <tr class="clickable" data-payment-id="${p.id}">
+            <td class="cell-mono">${p.id}</td>
+            <td>${escapeHtml(p.customerName)}</td>
+            <td class="cell-amount">${formatCurrency(p.amount)}</td>
+            <td>${PAYMENT_METHODS[p.method] || p.method}</td>
+            <td>${statusBadge(p.status)}</td>
+            <td class="cell-mono">${p.dateDisplay}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+function attachPaymentRowHandlers(container) {
+  container.querySelectorAll("tr[data-payment-id]").forEach(row => {
+    row.addEventListener("click", () => openPaymentDetail(row.dataset.paymentId));
+  });
+}
+
+function statusBadge(status) {
+  const labels = { paid: "Pago", pending: "Pendente", failed: "Falhou", refunded: "Reembolsado" };
+  return `<span class="status-badge status-badge--${status}">${labels[status] || status}</span>`;
+}
+
+function openPaymentDetail(paymentId) {
+  const p = Store.findPayment(paymentId);
+  if (!p) return;
+  const body = document.getElementById("payment-detail-body");
+  body.innerHTML = `
+    <div class="detail-row"><span class="detail-row__label">ID</span><span class="detail-row__value">${p.id}</span></div>
+    <div class="detail-row"><span class="detail-row__label">Cliente</span><span class="detail-row__value">${escapeHtml(p.customerName)}</span></div>
+    <div class="detail-row"><span class="detail-row__label">Valor</span><span class="detail-row__value">${formatCurrency(p.amount)}</span></div>
+    <div class="detail-row"><span class="detail-row__label">Método</span><span class="detail-row__value">${PAYMENT_METHODS[p.method] || p.method}</span></div>
+    <div class="detail-row"><span class="detail-row__label">Status</span><span class="detail-row__value">${statusBadge(p.status)}</span></div>
+    <div class="detail-row"><span class="detail-row__label">Descrição</span><span class="detail-row__value">${escapeHtml(p.description || "—")}</span></div>
+    <div class="detail-row"><span class="detail-row__label">Criado em</span><span class="detail-row__value">${p.dateDisplay}</span></div>
+    ${p.status === "pending" || p.status === "paid" ? `
+      <div style="margin-top:1.2rem;display:flex;gap:.6rem">
+        ${p.status === "pending" ? `<button class="btn btn--ghost btn--sm" data-action="mark-paid" data-id="${p.id}">Marcar como pago</button>` : ""}
+        ${p.status === "paid" ? `<button class="btn btn--ghost btn--sm" data-action="refund" data-id="${p.id}">Reembolsar</button>` : ""}
+      </div>
+    ` : ""}
+  `;
+
+  body.querySelectorAll("[data-action]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const action = btn.dataset.action;
+      const id = btn.dataset.id;
+      if (action === "mark-paid") Store.updatePaymentStatus(id, "paid");
+      if (action === "refund") Store.updatePaymentStatus(id, "refunded");
+      closeModal("modal-payment-detail");
+      refreshAllViews();
+      showToast("Status do pagamento atualizado.");
+    });
+  });
+
+  openModal("modal-payment-detail");
+}
+
+function onPaymentSettled(payment) {
+  refreshAllViews();
+  showToast(`Pagamento ${payment.id} ${payment.status === "paid" ? "confirmado ✓" : "falhou"}.`, payment.status === "paid" ? "success" : "error");
+}
+
+function refreshAllViews() {
+  renderKpis();
+  renderVolumeAndDonut();
+  renderRecentPaymentsTable();
+  renderPaymentsTable();
+}
+
+// ════════════════════════════════════════════════════
+//  MODALS
+// ════════════════════════════════════════════════════
+function initModals() {
+  document.querySelectorAll("[data-close-modal]").forEach(el => {
+    el.addEventListener("click", () => {
+      document.querySelectorAll(".modal").forEach(m => m.classList.add("hidden"));
+    });
+  });
+
+  document.getElementById("form-customer").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const data = {
+      name: document.getElementById("cust-name").value.trim(),
+      email: document.getElementById("cust-email").value.trim(),
+      doc: document.getElementById("cust-doc").value.trim(),
+      phone: document.getElementById("cust-phone").value.trim(),
+    };
+    if (!data.name || !data.email || !data.doc) return;
+    Store.addCustomer(data);
+    closeModal("modal-customer");
+    e.target.reset();
+    renderCustomersTable();
+    renderKpis();
+    showToast("Cliente cadastrado com sucesso.");
+  });
+
+  document.getElementById("form-payment").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const data = {
+      customerId: document.getElementById("pay-customer").value,
+      amount: parseFloat(document.getElementById("pay-amount").value),
+      method: document.getElementById("pay-method").value,
+      description: document.getElementById("pay-desc").value.trim(),
+    };
+    if (!data.customerId || !data.amount || data.amount <= 0) return;
+    Store.addPayment(data);
+    closeModal("modal-payment");
+    e.target.reset();
+    refreshAllViews();
+    showToast("Cobrança criada. Processando pagamento...");
+  });
+}
+
+function populateCustomerSelect() {
+  const select = document.getElementById("pay-customer");
+  const customers = Store.getCustomers();
+  select.innerHTML = `<option value="">Selecione um cliente</option>` +
+    customers.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join("");
+}
+
+function openModal(id) {
+  document.getElementById(id).classList.remove("hidden");
+}
+function closeModal(id) {
+  document.getElementById(id).classList.add("hidden");
+}
+
+// ════════════════════════════════════════════════════
+//  API KEY COPY
+// ════════════════════════════════════════════════════
+function initApiKeyCopy() {
+  document.querySelectorAll("[data-copy]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const text = btn.dataset.copy;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => showToast("Chave copiada."));
+      } else {
+        showToast("Chave: " + text);
+      }
+    });
+  });
+}
+
+// ════════════════════════════════════════════════════
+//  TOAST
+// ════════════════════════════════════════════════════
+function showToast(message, type) {
+  const container = document.getElementById("toast-container");
+  const toast = document.createElement("div");
+  toast.className = "toast" + (type === "error" ? " toast--error" : "");
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3500);
+}
+
+// ════════════════════════════════════════════════════
+//  UTILS
+// ════════════════════════════════════════════════════
+function formatCurrency(value) {
+  return "R$ " + value.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr + "T00:00:00");
+  return d.toLocaleDateString("pt-BR");
+}
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str == null ? "" : String(str);
+  return div.innerHTML;
+}
+</script>
+</body>
+</html>
